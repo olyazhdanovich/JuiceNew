@@ -1,0 +1,5 @@
+HTTP/1.1 200 OK
+Content-length: 38
+Date: Sat, 21 Mar 2015 20:20:14 GMT
+
+{"token":"TN19EN","messages":["olga"]}

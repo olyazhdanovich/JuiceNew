@@ -1,0 +1,14 @@
+GET http://10.106.31.212:999/chat?token=TN11EN HTTP/1.1
+Host: 10.106.31.212:999
+Connection: keep-alive
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.101 Safari/537.36
+Accept-Encoding: gzip, deflate, sdch
+Accept-Language: ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4
+
+
+HTTP/1.1 200 OK
+Content-length: 112
+Date: Sat, 21 Mar 2015 17:11:14 GMT
+
+{"token":"TN91EN","messages":[" ®γ¨Ά® ¨","θ®¨¥θ®¥θ","«®μ«μ","","¥«μμ«¥μ","","®«¥«¨μ΅¥«®","","®¥μ«¥«¥","ιθ®®¨¨"]}
