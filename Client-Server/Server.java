@@ -87,10 +87,8 @@ public class Server implements HttpHandler {
     }
     private void doDelete(HttpExchange httpExchange) { 	
     	String query = httpExchange.getRequestURI().getQuery();
-		System.out.println("in do delete");
     	if(query != null) {
     		 Map<String, String> map = queryToMap(query);
-			 System.out.println(map);
     		 String token = map.get("token");
     		 int index = -1;
     		 if (token != null && !"".equals(token)) {
