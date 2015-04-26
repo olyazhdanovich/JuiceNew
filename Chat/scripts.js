@@ -11,14 +11,13 @@ function restoreLogin() {
     return last_name && JSON.parse(last_name);
 }
 
+var appState = {
+	mainUrl : 'http://localhost:999/chat',
+	token : 'TE11EN'
+};
+
 function login() {
     user_name = document.getElementById('user_name');
-    var rest_name = restoreLogin();
-    str = "User" + ":" + rest_name;
-    taskList.push(str);
-    var rest_message = restoreMessage();
-    messag = rest_message;
-    taskList.push(messag);
     if (user_name.value != "") {
         menu = document.getElementById('menu');
         name = user_name.value;
@@ -27,11 +26,20 @@ function login() {
         chatArea.style.display = "block";
         user = document.getElementById('user');
         user.style.display = "none";
-        str = "User"+":"+name;
-        taskList.push(str);
-        localStorage.setItem('name', JSON.stringify(name));
-        localStorage.setItem('list', JSON.stringify(taskList," ",4));
-         }
+        updateMessage();
+    }
+};
+
+function updateMessage() {
+    get(appState.mainUrl + "?token=" + appState.token,
+        function (answer) {
+            chatText = document.getElementById('chatText');
+            var str = "";
+            for (var i = 0; i < answer.messages.length; i++) {
+                str += answer.messages[i].user + " : " + answer.messages[i].message + "\n";
+            }
+            chatText.value = str;
+        });
 };
 
 function logout() {
@@ -57,18 +65,17 @@ function restoreMessage() {
 
 function message() {
     chatMessage = document.getElementById('chatMessage');
-    chatText = document.getElementById('chatText');
+    chatText = document.getElementById('charText');
+    var postData = new Object();
     if (chatMessage.value != "") {
-        mes = chatMessage.value;
-        nes = chatText.value;
-        chatText.value = chatText.value + name + ":" + " " + mes + "\n";
+        postData.message = chatMessage.value;
         chatMessage.value = '';
-        last = chatText.value;
-        mes1 = "Message"+" "+name + ":" + " " + mes;
-        messageList.push(mes1);
-        localStorage.setItem('message', JSON.stringify(messageList, " ", 4));
-        taskList.push(mes1);
-        localStorage.setItem('list', JSON.stringify(taskList," ",4));
+        postData.user = name;
+        postData.id = Math.floor(Math.random() * 100000);
+        post(appState.mainUrl, JSON.stringify(postData),
+        function () {
+            updateMessage();
+        });
     }
 };
 
@@ -81,41 +88,10 @@ function online() {
 };
 
 function del(){
-    chatDelete = document.getElementById('chatDelete');
-    chatText = document.getElementById('chatText');
-    if (chatText.value != "")
-        chatText.value = nes;
-    s = "Message"+" "+ mes+" " +"deleted";
-    taskList.push(s);
-    localStorage.setItem('list', JSON.stringify(taskList, " ", 4));
-
-};
-
-function show() {
-    str = document.getElementById('str');
-    chatText = document.getElementById('chatText');
-    if (str.innerHTML == "History") {
-        str.innerHTML = "Undo";
-        chatDelete = document.getElementById('chatDelete');
-        chatDelete.style.display = "none";
-        chatEdit = document.getElementById('chatEdit');
-        chatEdit.style.display = "none";
-        chatMessage = document.getElementById('chatMessage');
-        chatMessage.style.display = "none";
-        chatEnter = document.getElementById('chatEnter');
-        chatEnter.style.display = "none";
-        chatText = document.getElementById('chatText');
-        var item = localStorage.getItem('list');
-        chatText.value = item;
-    }
-    else if (str.innerHTML == "Undo") {
-        str.innerHTML = "History";
-        chatEdit.style.display = "block";
-        chatDelete.style.display = "block";
-        chatMessage.style.display = "block";
-        chatEnter.style.display = "block";
-        chatText.value = last;
-    }
+    deleteF(appState.mainUrl,
+    function () {
+        updateMessage();
+    });
 };
 
 function change() {
@@ -127,3 +103,59 @@ function change() {
     taskList.push(s1);
     localStorage.setItem('list', JSON.stringify(taskList, " ", 4)); 
 };
+function get(url, continueWith) {
+	ajax('GET', url, null, continueWith);
+}
+
+function post(url, data, continueWith) {
+	ajax('POST', url, data, continueWith);	
+}
+
+function deleteF(url,continueWith) {
+	ajax('DELETE', url, null, continueWith);	
+}
+
+
+function ajax(method, url, data, continueWith) {
+	stat = document.getElementById('status');
+    var xmlhttp = getXmlHttp();
+    xmlhttp.open(method, url, true);
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4) {
+            if (xmlhttp.status == 200) {
+                if (xmlhttp.responseText != "")
+                    continueWith(JSON.parse(xmlhttp.responseText));
+                else
+                    continueWith();
+                stat.innerHTML = "Online";
+                stat.style.background = "#7FFF00";
+            }
+            if (xmlhttp.status == 0) {
+                stat.innerHTML = "Offline";
+                stat.style.background = "red";
+            }
+        }
+    };
+    xmlhttp.ontimeout = function () {
+        stat.innerHTML = "Offline";
+        stat.style.background = "red";
+    }
+    xmlhttp.send(data);
+}
+
+function getXmlHttp() {
+    var xmlhttp;
+    try {
+        xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+    } catch (e) {
+        try {
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        } catch (E) {
+            xmlhttp = false;
+        }
+    }
+    if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
+        xmlhttp = new XMLHttpRequest();
+    }
+    return xmlhttp;
+}

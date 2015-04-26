@@ -85,32 +85,11 @@ public class Server implements HttpHandler {
             System.err.println("Invalid user message: " + httpExchange.getRequestBody() + " " + e.getMessage());
         }
     }
-    private void doDelete(HttpExchange httpExchange) { 	
-    	String query = httpExchange.getRequestURI().getQuery();
-    	if(query != null) {
-    		 Map<String, String> map = queryToMap(query);
-    		 String token = map.get("token");
-    		 int index = -1;
-    		 if (token != null && !"".equals(token)) {
-                  index = messageExchange.getIndex(token);
-    		 }
-    		 if(index != -1) {
-    		 DataMessage message = history.get(index);
-    		 String messageForDelete = message.getText();
-    		 message.deleteMessage();
-    		 System.out.println("Delete Message : " + message.getNameUser() + " : " + messageForDelete);
-    		 }
-    	}
-		/*try {
-		int id = messageExchange.getMessageId(httpExchange.getRequestBody());
-        //System.out.println("Delete message : " + id);
-        DataMessage message = history.get(id);
-		String messageForDelete = message.getText();
-    	message.deleteMessage();
-    	System.out.println("Delete Message : " + message.getNameUser() + " : " + messageForDelete);
-		} catch (ParseException e) {
-            System.err.println("Invalid user message: " + httpExchange.getRequestBody() + " " + e.getMessage());
-        }*/
+    private void doDelete(HttpExchange httpExchange) {
+	    DataMessage message = history.get(history.size() - 1);
+	    System.out.println("Delete Message : " + message.getNameUser() + " : " + message.getText());
+		history.remove(history.size() - 1);
+    	
     }
     private void doPut(HttpExchange httpExchange) {
     try {
@@ -130,8 +109,12 @@ public class Server implements HttpHandler {
             byte[] bytes = response.getBytes();
 			Headers headers = httpExchange.getResponseHeaders();
 			headers.add("Access-Control-Allow-Origin","*");
-            httpExchange.sendResponseHeaders(200, bytes.length);
-
+			
+            if("OPTIONS".equals(httpExchange.getRequestMethod())){
+			
+            headers.add("Access-Control-Allow-Methods","PUT,DELETE,POST,GET,OPTIONS");
+			}
+			httpExchange.sendResponseHeaders(200, bytes.length);
             OutputStream os = httpExchange.getResponseBody();
             os.write( bytes);
             os.flush();

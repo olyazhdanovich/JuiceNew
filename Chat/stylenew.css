@@ -9,6 +9,14 @@ font-size : normal;
 font-family:Arial;
 font-weight:normal;
 }
+#chatText
+{
+    resize: none;
+}
+#chatMessage
+{
+    resize:none;
+}
 .b2{
 background: #7FFF00;
 position:absolute;
@@ -17,8 +25,8 @@ left: 1200px;
 display: inline-block;
 border:3px solid #85A0C9;
 border-radius: 30px;
--webkit-border-radius: 30px;
--moz-border-radius: 30px;
+-webkit-border-radius: 90px;
+-moz-border-radius: 90px;
 	}
 .b3{
 position:absolute;
